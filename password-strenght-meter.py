@@ -1,4 +1,5 @@
 import re
+import streamlit as st
 
 # Password Strength Meter
 def check_password_strength(password):
@@ -9,7 +10,7 @@ def check_password_strength(password):
     if len(password) >= 8:  # Password ki length check karta hai, minimum 8 characters
         score += 1
     else:
-        feedback.append("\u274C Password should be at least 8 characters long.") #\u274C Error Messages ya Negative Feedback dikhane ke liye.
+        feedback.append("\u274C Password should be at least 8 characters long.")
 
     # Upper & Lowercase Check
     if re.search(r"[A-Z]", password) and re.search(r"[a-z]", password):  # Upper aur lowercase letters check karta hai
@@ -37,26 +38,30 @@ def check_password_strength(password):
     else:  # Weak password condition
         return "weak", feedback
 
-# Login Form
-def login():
-    print("\U0001F510 Welcome to the Login Form!")
-    name = input("Enter your name: ")
-    password = input("Enter your password: ")
+# Streamlit App
+def main():
+    st.title("🔐 Password Strength Meter with NEHA")
+    st.write("Welcome to the Login Form! Please enter your details below.")
 
-    strength, message = check_password_strength(password)
+    # User Inputs
+    name = st.text_input("Enter your name:")
+    password = st.text_input("Enter your password:", type="password")
 
-    if strength == "strong":
-        print("\nRedirecting to the next page...\n")
-        print(f"\U0001F389 Welcome {name}!")
-        print("Welcome Neha Khan Apps!")
-    elif strength == "moderate":
-        print("\nPassword is moderate. Please improve it.")
-        print(message)
-    else:
-        print("\nPassword is weak. Please improve it using the suggestions below:")
-        for suggestion in message:
-            print("  -", suggestion)
+    # Check Password Strength
+    if st.button("Submit"):
+        if name and password:
+            strength, message = check_password_strength(password)
+            if strength == "strong":
+                st.success(f"🎉 Welcome {name}!")
+                st.balloons()
+            elif strength == "moderate":
+                st.warning(message)
+            else:
+                st.error("❌ Weak Password. Please improve it using the suggestions below:")
+                for suggestion in message:
+                    st.write(f"  - {suggestion}")
+        else:
+            st.error("❌ Please fill in both fields.")
 
-# Execute Login Function
 if __name__ == "__main__":
-    login()
+    main()
